@@ -1,0 +1,31 @@
+commit 429743c56b77f5f9e3d0599ea0b7ffa42d867e3d
+Author: James Zern <jzern@google.com>
+Date:   Tue Aug 7 17:12:10 2012 -0700
+
+    fix timestamp calculation rollover w/altref
+    
+    using large values for the timebase, e.g., {33333, 1000000} could
+    rollover the timestamp calculation in vp8e_encode as it was not using
+    64-bit math.
+    
+    originally reported on ffmpeg's trac:
+      https://ffmpeg.org/trac/ffmpeg/ticket/1014
+    
+    BUG=468
+    
+    Change-Id: Iedb4e11de086a3dda75097bfaf08f2488e2088d8
+
+diff --git a/vp8/vp8_cx_iface.c b/vp8/vp8_cx_iface.c
+index 072314f..7db82c0 100644
+--- a/vp8/vp8_cx_iface.c
++++ b/vp8/vp8_cx_iface.c
+@@ -891,7 +891,8 @@ static vpx_codec_err_t vp8e_encode(vpx_codec_alg_priv_t  *ctx,
+                 VP8_COMP *cpi = (VP8_COMP *)ctx->cpi;
+ 
+                 /* Add the frame packet to the list of returned packets. */
+-                round = 1000000 * ctx->cfg.g_timebase.num / 2 - 1;
++                round = (vpx_codec_pts_t)1000000
++                        * ctx->cfg.g_timebase.num / 2 - 1;
+                 delta = (dst_end_time_stamp - dst_time_stamp);
+                 pkt.kind = VPX_CODEC_CX_FRAME_PKT;
+                 pkt.data.frame.pts =

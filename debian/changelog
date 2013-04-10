@@ -1,3 +1,13 @@
+libvpx (1.1.0-1+wmf1) precise; urgency=low
+
+  * Backport libvpx 1.1.0 to precise
+
+  * debian/patches/03_altref_calculation.patch
+    + Fix timestamp calculation rollover w/altref
+      (https://gerrit.chromium.org/gerrit/#/c/29547/)
+
+ -- Jan Gerber <jgerber@wikimedia.org>  Tue, 02 Apr 2013 17:42:04 +0200
+
 libvpx (1.1.0-1) unstable; urgency=low
 
   * New upstream release, "Eider".
